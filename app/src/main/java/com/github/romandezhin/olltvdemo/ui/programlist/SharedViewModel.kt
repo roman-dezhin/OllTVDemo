@@ -12,12 +12,15 @@ import kotlinx.coroutines.launch
 
 class SharedViewModel : ViewModel() {
     private val interactor = MainModule.getProgramInteractorImpl()
-    private var direction = 0
-    private var borderId = 0
+
+    companion object {
+        private const val STARTING_DIRECTION = 0
+        private const val STARTING_BORDER_ID = 0
+    }
 
     private val programs: MutableLiveData<List<Program>> by lazy {
         MutableLiveData<List<Program>>().also {
-            loadPrograms(borderId, direction)
+            loadPrograms(STARTING_BORDER_ID, STARTING_DIRECTION)
         }
     }
 
