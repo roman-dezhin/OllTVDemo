@@ -14,12 +14,19 @@ import com.github.romandezhin.olltvdemo.R
 import com.github.romandezhin.olltvdemo.databinding.FragmentProgramListBinding
 import com.github.romandezhin.olltvdemo.domain.exception.NetworkConnectionException
 import com.github.romandezhin.olltvdemo.domain.model.Program
+import com.google.android.material.transition.MaterialFadeThrough
 
 class ProgramListFragment : Fragment() {
-
     private var _binding: FragmentProgramListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: SharedViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        exitTransition = MaterialFadeThrough()
+        reenterTransition = MaterialFadeThrough()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

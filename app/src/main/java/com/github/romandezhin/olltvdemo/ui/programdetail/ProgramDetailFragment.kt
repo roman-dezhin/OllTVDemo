@@ -11,12 +11,19 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.github.romandezhin.olltvdemo.databinding.FragmentProgramDetailBinding
 import com.github.romandezhin.olltvdemo.ui.programlist.SharedViewModel
+import com.google.android.material.transition.MaterialFadeThrough
 
 class ProgramDetailFragment : Fragment() {
     private var _binding: FragmentProgramDetailBinding? = null
     private val binding get() = _binding!!
     private val args: ProgramDetailFragmentArgs by navArgs()
     private val viewModel: SharedViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialFadeThrough()
+        returnTransition = MaterialFadeThrough()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
