@@ -4,6 +4,7 @@
     <string name="title_program_list">Programs</string>
     <string name="title_program_detail">Program Detail</string>
     <string name="channel_icon">Channel icon</string>
+    <string name="no_more_programs">There are no more new programs</string>
     <string name="error_network_connection">Please, check your internet connection</string>
     <string name="error_server_unavailable">Server unavailable</string>
 </resources>

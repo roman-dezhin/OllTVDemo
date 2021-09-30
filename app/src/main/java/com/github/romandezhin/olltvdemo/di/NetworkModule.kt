@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object NetworkModule {
-    private const val BASE_URL = "http://oll.tv/api/"
+    private const val BASE_URL = "https://oll.tv/api/"
     private lateinit var retrofit: Retrofit
     lateinit var connectionManager: ConnectionManager
 

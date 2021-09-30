@@ -32,8 +32,12 @@ class SharedViewModel : ViewModel() {
 
     fun getPrograms(): LiveData<List<Program>> = programs
 
-    fun getProgram(id: Int): Program? {
-        return programs.value?.get(id)
+    fun loadMorePrograms(borderId: Int, direction: Int) {
+        loadPrograms(borderId, direction)
+    }
+
+    fun getProgramByPosition(position: Int): Program? {
+        return programs.value?.get(position)
     }
 
     private fun loadPrograms(borderId: Int, direction: Int) =
@@ -44,10 +48,33 @@ class SharedViewModel : ViewModel() {
             } catch (e: Exception) {
                 Result.Error(e)
             }
-            _loading.postValue(false)
             when (result) {
-                is Result.Success<List<Program>> -> programs.postValue(result.data)
+                is Result.Success<List<Program>> -> postNewData(result.data, direction)
                 is Result.Error -> _error.postValue(result.exception)
             }
+            _loading.postValue(false)
         }
+
+    private fun postNewData(data: List<Program>, direction: Int) {
+        if (data.size == 1
+            && (data[0].id == programs.value?.get(0)?.id
+                    || data[0].id == programs.value?.last()?.id)
+        ) {
+            programs.postValue(emptyList())
+            return
+        }
+
+        val currentList: MutableList<Program> = mutableListOf()
+
+        if (!programs.value.isNullOrEmpty()) currentList.addAll(programs.value!!)
+
+        if (direction < STARTING_DIRECTION) {
+            currentList.addAll(0, data)
+            programs.postValue(currentList)
+        } else {
+            currentList.addAll(data)
+            programs.postValue(currentList)
+        }
+
+    }
 }

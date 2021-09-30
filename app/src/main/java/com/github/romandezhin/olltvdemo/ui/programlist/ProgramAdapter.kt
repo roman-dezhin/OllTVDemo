@@ -11,10 +11,10 @@ import com.bumptech.glide.request.target.Target
 import com.github.romandezhin.olltvdemo.databinding.ProgramListContentBinding
 import com.github.romandezhin.olltvdemo.domain.model.Program
 
-class SimpleItemRecyclerViewAdapter(
+class ProgramAdapter(
     private val values: MutableList<Program>,
     private val onClickListener: View.OnClickListener
-) : RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<ProgramAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -46,8 +46,25 @@ class SimpleItemRecyclerViewAdapter(
 
     fun addItems(list: List<Program>) {
         val currentSize = itemCount
-        values.addAll(list)
-        notifyItemRangeInserted(currentSize, list.size)
+        if (currentSize == 0) {
+            values.addAll(list)
+            notifyItemRangeInserted(0, list.size)
+        } else
+            if (values[0].id == list[0].id) {
+                values.addAll(list.subList(itemCount, list.size))
+                notifyItemRangeInserted(currentSize, list.size - currentSize)
+            } else if (values[itemCount - 1] == list[list.size - 1]) {
+                values.addAll(0, list.subList(0, list.size - currentSize))
+                notifyItemRangeInserted(0, list.size - currentSize)
+            }
+    }
+
+    fun getFirstItemId(): Int {
+        return values[0].id
+    }
+
+    fun getLastItemId(): Int {
+        return values.last().id
     }
 
     inner class ViewHolder(binding: ProgramListContentBinding) :

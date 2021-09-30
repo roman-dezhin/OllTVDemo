@@ -37,7 +37,7 @@ class ProgramDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val program = viewModel.getProgram(args.item)
+        val program = viewModel.getProgramByPosition(args.item)
         program?.let { it ->
             with(binding) {
                 Glide

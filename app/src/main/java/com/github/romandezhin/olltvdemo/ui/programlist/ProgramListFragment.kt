@@ -9,11 +9,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.romandezhin.olltvdemo.R
 import com.github.romandezhin.olltvdemo.databinding.FragmentProgramListBinding
 import com.github.romandezhin.olltvdemo.domain.exception.NetworkConnectionException
-import com.github.romandezhin.olltvdemo.domain.model.Program
 import com.google.android.material.transition.MaterialFadeThrough
 
 class ProgramListFragment : Fragment() {
@@ -47,36 +47,41 @@ class ProgramListFragment : Fragment() {
             val action = ProgramListFragmentDirections.showProgramDetail(position)
             itemView.findNavController().navigate(action)
         }
-        val adapter = SimpleItemRecyclerViewAdapter(
+        val adapter = ProgramAdapter(
             mutableListOf(),
             onClickListener
         )
         recyclerView.adapter = adapter
 
+        val layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = layoutManager
+
+        recyclerView.addOnScrollListener(object : TwoWayOnScrollListener(adapter, layoutManager) {
+            override fun loadMore(borderId: Int, direction: Int) {
+                viewModel.loadMorePrograms(borderId, direction)
+            }
+        })
+
         viewModel.getPrograms().observe(viewLifecycleOwner, { programs ->
-            addPrograms(adapter, programs)
+            if (programs.isEmpty()) {
+                Toast.makeText(context, getString(R.string.no_more_programs), Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                adapter.addItems(programs)
+            }
+
         })
 
         viewModel.error.observe(viewLifecycleOwner, { exception ->
             val errorMessage = when (exception) {
                 is NetworkConnectionException -> getString(R.string.error_network_connection)
-                else -> getString(R.string.error_server_unavailable)
+                else -> getString(R.string.error_server_unavailable) + exception.message
             }
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         })
         viewModel.loading.observe(viewLifecycleOwner, { isLoading ->
-            showLoading(isLoading)
+            binding.progressBar.isVisible = isLoading
         })
-    }
-
-    private fun addPrograms(adapter: SimpleItemRecyclerViewAdapter, list: List<Program>) {
-        showLoading(false)
-        adapter.addItems(list)
-    }
-
-    private fun showLoading(show: Boolean) {
-        binding.progressBar.isEnabled = show
-        binding.progressBar.isVisible = show
     }
 
     override fun onDestroyView() {
